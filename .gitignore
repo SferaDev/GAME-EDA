@@ -1,0 +1,6 @@
+.idea/*
+*.o
+Makefile.deps
+Game
+gmon.out
+cmake-build-debug/*

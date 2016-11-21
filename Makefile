@@ -1,26 +1,10 @@
-# To be able to play with the Dummy:
-#
-# 1) Copy one of:
-#
-# AIDummy.o.Linux64 (Linux   64 bits)
-# AIDummy.o.Linux32 (Linux   32 bits)
-# AIDummy.o.Win32   (Windows 32 bits)
-# AIDummy.o.Win64   (Windows 64 bits)
-# AIDummy.o.MacOS   (Mac)
-#
-# to AIDummy.o
-#
-# 2) Uncomment the following line.
-#
-#DUMMY_OBJ = AIDummy.o
-
 # Add here any extra .o player files you want to link to the executable
-EXTRA_OBJS =
+EXTRA_OBJS = *.player
 
 # Config
 OPTIMIZE = 2 # Optimization level (0 to 3)
 DEBUG    = 0 # Compile for debugging (0 or 1)
-PROFILE  = 0 # Compile for profile (0 or 1)
+PROFILE  = 1 # Compile for profile (0 or 1)
 32BITS   = 0 # Produce 32 bits objects on 64 bits systems (0 or 1)
 
 
@@ -30,7 +14,7 @@ PROFILE  = 0 # Compile for profile (0 or 1)
 # The following two lines will detect all your players (files matching "AI*.cc")
 
 PLAYERS_SRC = $(wildcard AI*.cc)
-PLAYERS_OBJ = $(patsubst %.cc, %.o, $(PLAYERS_SRC)) $(EXTRA_OBJS) $(DUMMY_OBJ)
+PLAYERS_OBJ = $(patsubst %.cc, %.o, $(PLAYERS_SRC)) $(EXTRA_OBJS)
 
 # Flags
 
@@ -44,7 +28,7 @@ ifeq ($(strip $(32BITS)),1)
 	ARCHFLAGS=-m32 -L/usr/lib32
 endif
 
-CXXFLAGS = -std=c++11 -Wall -Wno-unused-variable $(ARCHFLAGS) $(PROFILEFLAGS) $(DEBUGFLAGS) -O$(strip $(OPTIMIZE))
+CXXFLAGS = -std=c++11 -Wall -Wno-unused-variable $(ARCHFLAGS) $(PROFILEFLAGS) $(DEBUGFLAGS) -O$(strip $(OPTIMIZE)) -fPIC
 
 LDFLAGS  = -std=c++11 -lm $(ARCHFLAGS) $(PROFILEFLAGS) $(DEBUGFLAGS) -O$(strip $(OPTIMIZE)) -lrt
 
