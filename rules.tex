@@ -1,0 +1,141 @@
+
+\section{Game rules}
+
+\medskip In this game, four players have control over an army of
+farmers, knights and witches on a $37 \times 37$ board.
+
+\medskip The goal of the game is to ``farm'' as many cells as possible,
+converting them to the team color. Initially, the cells have no color.
+Every round, the number of cells of each color is added to the
+corresponding score. The winner of the game is the player with the
+highest score after the last round.
+
+\medskip Each player has a quadrant where their units are initially
+born, and where they are reborn when captured (killed) from other
+teams. Player 0 has the top-left quadrant, player 1 the bottom-left
+quadrant, player 2 the bottom-right \mbox{quadrant}, and player 3 the
+top-right quadrant. At the beginning of the game, each player gets 20
+farmers, 10 knights and 2 witches on its quadrant.
+
+\medskip The game lasts 200 rounds. Every round, every player can move
+each own unit at most once. Farmers  and witches can only move
+horizontally and vertically. Knights can also move diagonally, and
+attack rival units.
+
+\medskip The boards have walls, that is, obstacles that units cannot
+visit nor traverse. The top row, bottom row, lef-most column, and
+right-most column only have walls. Trying to move a unit into a wall is
+an invalid move.
+
+\medskip Initially, farmers have health 100, and knights have health
+200. Deliberately not moving a unit (or moving it in the \texttt{None}
+direction) will increase its health by 30~units. A unit cannot have
+more health than its initial amount. Performing an invalid move results
+in that unit not moving, but does not regenerate health.
+
+\medskip Witches are immortal. Witches can move to any adjacent empty
+cell. Any cell at Manhattan distance at most two from a witch (that is,
+at most two horizontal or vertical steps away from a witch, or
+diagonally adjacent to a witch) is haunted, even if there is a wall in between.
+Any farmer or knight in a
+haunted cell dies immediately, even if the spell comes from a witch of
+the own team.
+
+\medskip A witch gets ``deactivated'' when there are one or more
+witches at Manhattan distance at most two from her, even if there is
+just one such witch, and from the same team. Deactivated witches do not
+haunt any sorrounding cells, and farmers and knights can move around
+them (until the witches get activated again, of course).
+
+\medskip Farmers can move to any adjacent empty cell. If that cell is
+haunted, the farmer dies. Otherwise, the cell is painted with the
+farmer's team color.
+
+\medskip Knights can move to any adjacent or diagonally adjacent empty
+cell. If that cell is haunted, the knight dies.
+
+\medskip A unit killed by the spell of one or more witches
+will be reborn as a unit of another team.
+If all the killing witches belong to the same team of the dead unit,
+the new team will be selected uniformly at random among the rest of teams.
+Otherwise, the new team will be selected with probability proportional
+to the number of killing witches of the other teams.
+For instance, if a unit of player 2 dies under the spell
+of one witch of team 0, two witches of team 1,
+and one witch of team 2,
+then the new team will be 0 with probability $1/3$,
+and will be 1 with probability $2/3$.
+
+\medskip Knights can attack any adjacent or diagonally adjacent
+rival farmer or rival knight (by an order to move there).
+Trying to attack an own unit or a witch
+is an invalid movement. Otherwise, the rival unit loses a random amount
+of health between 60 and 90. If the new health drops to 0 or below,
+that unit is captured by the team of the attacking knight.
+
+\medskip Every round, more than one order can be given to the same
+unit, although only the first such order (if any) will be selected. Any
+player program that tries to give more than 1000 orders during the same
+round will be aborted.
+
+\medskip Every round, all the selected orders will be executed using a
+random order. For instance, if two farmers try to move to the same
+empty cell, only the farmer that happens to move first will move there.
+As another example, assume that one farmer and one rival knight
+try to move to the same empty cell.
+If the knight happens to move first,
+afterwards the farmer will not move,
+because it would be an illegal movement.
+However, if the farmer moves first,
+afterwards the knight will attack the farmer,
+by trying to move to the farmer's position.
+
+\medskip After all the selected movements of a round are played, the
+units captured by each team are reborn in its corresponding quadrant.
+Whenever possible, all units are reborn at Manhattan distance at least
+3 from witches. Additionally, farmers are not placed adjacent to rival
+knights, and knights are not placed adjacent or diagonally adjacent to
+any rival unit. In the rare cases when this cannot be accomplished,
+units are reborn on any legal cell in the own quadrant, or on any legal
+cell in any other quadrant, in even more exceptional situations.
+
+\medskip Although there are four players, with numbers 0 to 3, when
+programming your strategy you must always assume that you are player 0.
+If you are not, the board will be rotated consistently with your
+illusion. For instance, if you are player 1, any movement in the
+\texttt{Right} direction by you will be automatically transformed into
+a movement to the \texttt{Top}.
+
+\medskip Note that the valid directions are
+\texttt{Bottom}, \texttt{BR}, \texttt{Right}, \texttt{RT}, \texttt{Top},
+\texttt{TL}, \texttt{Left}, \texttt{LB} and \texttt{None},
+corresponding to integers from 0 to 8.
+This circular definition can be used
+to simplify the implementation of your player.
+See the \texttt{Demo} player for some examples.
+
+\medskip If you need (pseudo) random numbers,
+you must use two methods provided by the game:
+\texttt{random(l, u)}, which returns a random integer in \texttt{[l..u]},
+and (less frequently) \texttt{random\_permutation(n)},
+which returns a \texttt{vector<int>}
+with a random permutation of \texttt{[0..n-1]}.
+
+\medskip A game is defined by a board and the following set of parameters:
+
+\begin{itemize}
+  \item @nb_players@: Number of teams in the game (4).
+  \item @nb_rounds@: Number of rounds that will be played (200).
+  \item @nb_farmers@: Initial number of farmers per player (20).
+  \item @nb_knights@: Initial number of knights per player (10).
+  \item @nb_witches@: Constant number of witches per player (2).
+  \item @farmers_health@: The maximum (and initial) health of a farmer (100).
+  \item @knights_health@: The maximum (and initial) health of a knight (200).
+  \item @farmers_regen@: The amount of health a farmer will regenerate when not moving (30).
+  \item @knights_regen@: The amount of health a knight will regenerate when not moving (30).
+  \item @damage_min@: The minimum amount of damage a knight will inflict when attacking (60).
+  \item @damage_max@: The maximum amount of damage a knight will inflict when attacking (90).
+  \item @rows@: Vertical size of the board (37).
+  \item @cols@: Horizontal size of the board (37).
+\end{itemize}
+
